@@ -32,7 +32,14 @@ class PandocReader(BaseReader):
         output = pypandoc.convert_file(
             path, to=self.output_format, extra_args=extra_args, filters=filters
         )
+
+        # These magic strings are used by Pelican to create the proper URLs.
+        # Pandoc however, tries to adhere best practices and escapes the curly
+        # braces in the URLs, which leads to Pelican no longer understanding
+        # them. This naive solution converts them back.
         output = output.replace("%7Bfilename%7D", "{filename}")
+        output = output.replace("%7Bstatic%7D", "{static}")
+        output = output.replace("%7Battach%7D", "{attach}")
 
         return output, metadata
 
